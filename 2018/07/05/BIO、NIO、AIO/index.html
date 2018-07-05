@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html >
+<html lang="zh-Hans">
 <head>
 
     <!--[if lt IE 9]>
@@ -11,33 +11,33 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="format-detection" content="telephone=no" />
-<meta name="author" content="John Doe" />
+<meta name="author" content="Tcytw" />
 
 
 
-<meta name="description" content="BIO、NIO、AIO几个基本概念（针对于IO交互）：IO请求的两个阶段：  等待数据阶段：内核通过网关准备好相关的IO数据。 将数据从内核复制到用户空间。    同步与异步： ​    同步IO：进程中的某个线程向计算机内核发出一个IO请求，然后就进入等待状态，直到IO操作完成后才醒来继续执行。 ​    异步IO：进程中的某个线程向计算机内核发出一个IO请求，然后立即返回，内核完成了IO操作后">
+<meta name="description" content="###几个基本概念（针对于IO交互）： IO请求的两个阶段：  等待数据阶段：内核通过网关准备好相关的IO数据。 将数据从内核复制到用户空间。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="BIO、NIO、AIO">
-<meta property="og:url" content="http://yoursite.com/2018/07/04/BIO、NIO、AIO/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="BIO、NIO、AIO几个基本概念（针对于IO交互）：IO请求的两个阶段：  等待数据阶段：内核通过网关准备好相关的IO数据。 将数据从内核复制到用户空间。    同步与异步： ​    同步IO：进程中的某个线程向计算机内核发出一个IO请求，然后就进入等待状态，直到IO操作完成后才醒来继续执行。 ​    异步IO：进程中的某个线程向计算机内核发出一个IO请求，然后立即返回，内核完成了IO操作后">
-<meta property="og:locale" content="default">
-<meta property="og:image" content="e:/图片/20170630113017731.png">
-<meta property="og:image" content="e:/图片/20170630113057759.png">
+<meta property="og:url" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/index.html">
+<meta property="og:site_name" content="Tcytw的个人博客">
+<meta property="og:description" content="###几个基本概念（针对于IO交互）： IO请求的两个阶段：  等待数据阶段：内核通过网关准备好相关的IO数据。 将数据从内核复制到用户空间。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/public/2018/07/05/BIO、NIO、AIO/阻塞IO.png">
+<meta property="og:image" content="http://yoursite.com/public/2018/07/05/BIO、NIO、AIO/非阻塞IO.png">
 <meta property="og:image" content="http://blog.anxpp.com/usr/uploads/2016/05/549520916.png">
 <meta property="og:image" content="e:/图片/21c0d590-0547-386e-ab24-ce1cf7bf3283.png">
 <meta property="og:image" content="https://images0.cnblogs.com/blog/405877/201411/142333254136604.png">
 <meta property="og:image" content="https://images0.cnblogs.com/blog/405877/201411/142333511475767.png">
-<meta property="og:updated_time" content="2018-07-04T05:10:15.684Z">
+<meta property="og:updated_time" content="2018-07-05T11:24:55.348Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BIO、NIO、AIO">
-<meta name="twitter:description" content="BIO、NIO、AIO几个基本概念（针对于IO交互）：IO请求的两个阶段：  等待数据阶段：内核通过网关准备好相关的IO数据。 将数据从内核复制到用户空间。    同步与异步： ​    同步IO：进程中的某个线程向计算机内核发出一个IO请求，然后就进入等待状态，直到IO操作完成后才醒来继续执行。 ​    异步IO：进程中的某个线程向计算机内核发出一个IO请求，然后立即返回，内核完成了IO操作后">
-<meta name="twitter:image" content="e:/图片/20170630113017731.png">
+<meta name="twitter:description" content="###几个基本概念（针对于IO交互）： IO请求的两个阶段：  等待数据阶段：内核通过网关准备好相关的IO数据。 将数据从内核复制到用户空间。">
+<meta name="twitter:image" content="http://yoursite.com/public/2018/07/05/BIO、NIO、AIO/阻塞IO.png">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
 
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="Tcytw的个人博客" type="application/atom+xml">
 
 
 
@@ -64,7 +64,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>BIO、NIO、AIO | Hexo</title>
+<title>BIO、NIO、AIO | Tcytw的个人博客</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -80,7 +80,7 @@
         isCategory: false,
         fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
         scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
-        search: 
+        search: true
     }
 </script>
 
@@ -104,14 +104,21 @@
 <div class="intrude-less">
     <header id="header" class="inner">
         <a href="/" class="profilepic">
-            <img src="/img/avatar.png" class="animated zoomIn">
+            <img src="/img/头像.jpg" class="animated zoomIn">
         </a>
         <hgroup>
-          <h1 class="header-author"><a href="/">John Doe</a></h1>
+          <h1 class="header-author"><a href="/">Tcytw</a></h1>
         </hgroup>
 
         
 
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
         
 
 
@@ -176,9 +183,9 @@
                     <nav class="header-nav">
                         <ul class="social">
                             
-                                <a class="fa Email" href="mailto:123@123.com" title="Email"></a>
+                                <a class="fa Email" href="/532260700@qq.com" title="Email"></a>
                             
-                                <a class="fa GitHub" href="#" title="GitHub"></a>
+                                <a class="fa GitHub" href="/github.com/Tcytw" title="GitHub"></a>
                             
                                 <a class="fa RSS" href="/atom.xml" title="RSS"></a>
                             
@@ -224,15 +231,15 @@
       <nav id="mobile-nav">
       <div class="overlay">
           <div class="slider-trigger"></div>
-          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">John Doe</a></h1>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Tcytw</a></h1>
       </div>
     <div class="intrude-less">
         <header id="header" class="inner">
             <a href="/" class="profilepic">
-                <img src="/img/avatar.png" class="animated zoomIn">
+                <img src="/img/头像.jpg" class="animated zoomIn">
             </a>
             <hgroup>
-              <h1 class="header-author"><a href="/" title="回到主页">John Doe</a></h1>
+              <h1 class="header-author"><a href="/" title="回到主页">Tcytw</a></h1>
             </hgroup>
             
             <nav class="header-menu">
@@ -252,9 +259,9 @@
             <nav class="header-nav">
                         <ul class="social">
                             
-                                <a class="fa Email" target="_blank" href="mailto:123@123.com" title="Email"></a>
+                                <a class="fa Email" target="_blank" href="/532260700@qq.com" title="Email"></a>
                             
-                                <a class="fa GitHub" target="_blank" href="#" title="GitHub"></a>
+                                <a class="fa GitHub" target="_blank" href="/github.com/Tcytw" title="GitHub"></a>
                             
                                 <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
                             
@@ -267,8 +274,8 @@
       <div class="body-wrap"><article id="post-BIO、NIO、AIO" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/07/04/BIO、NIO、AIO/" class="article-date">
-      <time datetime="2018-07-04T05:09:40.000Z" itemprop="datePublished">2018-07-04</time>
+      <a href="/2018/07/05/BIO、NIO、AIO/" class="article-date">
+      <time datetime="2018-07-05T08:30:13.000Z" itemprop="datePublished">2018-07-05</time>
 </a>
 
 
@@ -300,23 +307,23 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h2 id="BIO、NIO、AIO"><a href="#BIO、NIO、AIO" class="headerlink" title="BIO、NIO、AIO"></a>BIO、NIO、AIO</h2><h4 id="几个基本概念（针对于IO交互）："><a href="#几个基本概念（针对于IO交互）：" class="headerlink" title="几个基本概念（针对于IO交互）："></a>几个基本概念（针对于IO交互）：</h4><p>IO请求的两个阶段：</p>
+        <p>###几个基本概念（针对于IO交互）：</p>
+<p>IO请求的两个阶段：</p>
 <ol>
-<li>等待数据阶段：内核通过网关准备好相关的IO数据。<ol>
+<li>等待数据阶段：内核通过网关准备好相关的IO数据。</li>
 <li>将数据从内核复制到用户空间。</li>
 </ol>
-</li>
-</ol>
+<a id="more"></a>
 <p>同步与异步：</p>
 <p>​    同步IO：进程中的某个线程向计算机内核发出一个IO请求，然后就进入等待状态，直到IO操作完成后才醒来继续执行。</p>
 <p>​    异步IO：进程中的某个线程向计算机内核发出一个IO请求，然后立即返回，内核完成了IO操作后，向线程发送一个完成的通知，线程再去执行刚才没执行完的操作。</p>
 <p>阻塞与非阻塞：</p>
 <p>​    主要体现在IO的等待数据阶段。</p>
-<p>​    阻塞IO是当线程向内核发出请求后，当资源不可用时请求一直阻塞，直到内核准备好数据或请求超时。</p>
+<p>​    阻塞IO是当线程向内核发出请求后，当资源不可用时请求一直阻塞，内核准备好数据或请求超时。</p>
 <p>​    非阻塞IO则是发出请求之后线程就去处理其他事情，隔一段时间来询问内核是否准备好数据。</p>
 <p>需要说明的是，只有同步IO中才存在阻塞的情况，异步IO中都是非阻塞的。</p>
-<p><img src="E:\图片\20170630113017731.png" alt="20170630113017731"><center>阻塞IO</center></p>
-<p><img src="E:\图片\20170630113057759.png" alt="20170630113057759"></p>
+<p><img src="/../../public/2018/07/05/BIO、NIO、AIO/阻塞IO.png" alt="picture"><center>阻塞IO</center></p>
+<p><img src="/../../public/2018/07/05/BIO、NIO、AIO/非阻塞IO.png" alt="picture"></p>
 <center>非阻塞IO</center>
 
 
@@ -337,7 +344,7 @@
 <p><img src="https://images0.cnblogs.com/blog/405877/201411/142333254136604.png" alt="img"> </p>
 <p>Selector的轮询方式主要有select、poll、epoll，具体用法区别可参考</p>
 <p><a href="https://blog.csdn.net/chewbee/article/details/78108223#11%E6%B5%81%E7%9A%84%E6%A6%82%E5%BF%B5" target="_blank" rel="noopener">https://blog.csdn.net/chewbee/article/details/78108223#11%E6%B5%81%E7%9A%84%E6%A6%82%E5%BF%B5</a></p>
-<h3 id="异步非阻塞（AIO）"><a href="#异步非阻塞（AIO）" class="headerlink" title="异步非阻塞（AIO）"></a>异步非阻塞（AIO）</h3><h4 id="（一个有效请求一个线程）"><a href="#（一个有效请求一个线程）" class="headerlink" title="（一个有效请求一个线程）"></a>（一个有效请求一个线程）</h4><p>​    AIO使用的是Proactor模式，用户线程直接使用内核提供的异步IO API发起read请求，且发起后立即返回，继续执行用户线程代码。操作系统开启独立的内核线程去处理IO操作，当read请求的数据到达时，由内核负责读取socket中的数据，并写入用户指定的缓冲区中。最后内核将read的数据分发给内部Proactor，Proactor将IO完成的信息通知给用户线程（一般通过调用用户线程注册的完成事件处理函数），完成异步IO。 </p>
+<h3 id="三、异步非阻塞AIO"><a href="#三、异步非阻塞AIO" class="headerlink" title="三、异步非阻塞AIO"></a>三、异步非阻塞AIO</h3><h4 id="（一个有效请求一个线程）"><a href="#（一个有效请求一个线程）" class="headerlink" title="（一个有效请求一个线程）"></a>（一个有效请求一个线程）</h4><p>​    AIO使用的是Proactor模式，用户线程直接使用内核提供的异步IO API发起read请求，且发起后立即返回，继续执行用户线程代码。操作系统开启独立的内核线程去处理IO操作，当read请求的数据到达时，由内核负责读取socket中的数据，并写入用户指定的缓冲区中。最后内核将read的数据分发给内部Proactor，Proactor将IO完成的信息通知给用户线程（一般通过调用用户线程注册的完成事件处理函数），完成异步IO。 </p>
 <p><img src="https://images0.cnblogs.com/blog/405877/201411/142333511475767.png" alt="img"> </p>
 
       
@@ -347,13 +354,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/07/04/BIO、NIO、AIO/">BIO、NIO、AIO</a></p>
-        <p><span>文章作者:</span><a href="/" title="回到主页">John Doe</a></p>
-        <p><span>发布时间:</span>2018-07-04, 13:09:40</p>
-        <p><span>最后更新:</span>2018-07-04, 13:10:15</p>
+        <p><span>本文标题:</span><a href="/2018/07/05/BIO、NIO、AIO/">BIO、NIO、AIO</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Tcytw</a></p>
+        <p><span>发布时间:</span>2018-07-05, 16:30:13</p>
+        <p><span>最后更新:</span>2018-07-05, 19:24:55</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/07/04/BIO、NIO、AIO/" title="BIO、NIO、AIO">http://yoursite.com/2018/07/04/BIO、NIO、AIO/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/07/04/BIO、NIO、AIO/　　作者: John Doe" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/07/05/BIO、NIO、AIO/" title="BIO、NIO、AIO">http://yoursite.com/2018/07/05/BIO、NIO、AIO/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/07/05/BIO、NIO、AIO/　　作者: Tcytw" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -363,24 +370,13 @@
 
 
 
-    <nav id="article-nav">
-        
-        
-            <div id="article-nav-older" class="article-nav-title">
-                <a href="/2018/07/04/hello-hexo/">
-                    hello,hexo
-                </a>
-            </div>
-        
-    </nav>
-
   
 </article>
 
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#BIO、NIO、AIO"><span class="toc-number">1.</span> <span class="toc-text">BIO、NIO、AIO</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#几个基本概念（针对于IO交互）："><span class="toc-number">1.0.1.</span> <span class="toc-text">几个基本概念（针对于IO交互）：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一、同步阻塞BIO："><span class="toc-number">1.1.</span> <span class="toc-text">一、同步阻塞BIO：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#（一个连接一个线程）"><span class="toc-number">1.1.1.</span> <span class="toc-text">（一个连接一个线程）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、同步非阻塞NIO："><span class="toc-number">1.2.</span> <span class="toc-text">二、同步非阻塞NIO：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#（一个请求一个线程）"><span class="toc-number">1.2.1.</span> <span class="toc-text">（一个请求一个线程）</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#（1）缓冲区Buffer"><span class="toc-number">1.2.1.0.1.</span> <span class="toc-text">（1）缓冲区Buffer</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#（2）通道Channel"><span class="toc-number">1.2.1.0.2.</span> <span class="toc-text">（2）通道Channel</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#（3）多路复用器Selector"><span class="toc-number">1.2.1.0.3.</span> <span class="toc-text">（3）多路复用器Selector</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#异步非阻塞（AIO）"><span class="toc-number">1.3.</span> <span class="toc-text">异步非阻塞（AIO）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#（一个有效请求一个线程）"><span class="toc-number">1.3.1.</span> <span class="toc-text">（一个有效请求一个线程）</span></a></li></ol></li></ol></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、同步阻塞BIO："><span class="toc-number">1.</span> <span class="toc-text">一、同步阻塞BIO：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#（一个连接一个线程）"><span class="toc-number">1.1.</span> <span class="toc-text">（一个连接一个线程）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、同步非阻塞NIO："><span class="toc-number">2.</span> <span class="toc-text">二、同步非阻塞NIO：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#（一个请求一个线程）"><span class="toc-number">2.1.</span> <span class="toc-text">（一个请求一个线程）</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#（1）缓冲区Buffer"><span class="toc-number">2.1.0.1.</span> <span class="toc-text">（1）缓冲区Buffer</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#（2）通道Channel"><span class="toc-number">2.1.0.2.</span> <span class="toc-text">（2）通道Channel</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#（3）多路复用器Selector"><span class="toc-number">2.1.0.3.</span> <span class="toc-text">（3）多路复用器Selector</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、异步非阻塞AIO"><span class="toc-number">3.</span> <span class="toc-text">三、异步非阻塞AIO</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#（一个有效请求一个线程）"><span class="toc-number">3.1.</span> <span class="toc-text">（一个有效请求一个线程）</span></a></li></ol></li></ol>
         
     </div>
     <style>
@@ -416,7 +412,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"BIO、NIO、AIO　| Hexo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"BIO、NIO、AIO　| Tcytw的个人博客　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -442,13 +438,11 @@
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2018/07/04/hello-hexo/" title="下一篇: hello,hexo">
-                <i class="fa fa-angle-right"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
     </div>
 
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/07/04/BIO、NIO、AIO/">BIO、NIO、AIO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/04/hello-hexo/">hello,hexo</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/25/hello-world/">Hello World</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/07/05/BIO、NIO、AIO/">BIO、NIO、AIO</a></li></ul>
 
 
 
@@ -462,7 +456,7 @@
         <div id="footer-info">
             <div class="footer-left">
                 <i class="fa fa-copyright"></i> 
-                2016-2018 John Doe
+                2016-2018 Tcytw
             </div>
             <div class="footer-right">
                 <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
@@ -492,22 +486,6 @@
     </div>
     
 <script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
-
-    <script>
-        $(document).ready(function() {
-            var iPad = window.navigator.userAgent.indexOf('iPad');
-            if (iPad > -1 || $(".left-col").css("display") === "none") {
-                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
-                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
-                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
-            }
-            else {
-                var backgroundnum = 5;
-                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
-                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
-            }
-        })
-    </script>
 
 
 
