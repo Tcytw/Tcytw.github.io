@@ -16,23 +16,24 @@
 
 
 <meta name="description" content="几个基本概念（针对于IO交互）： IO请求的两个阶段：  等待数据阶段：内核通过网关准备好相关的IO数据。 将数据从内核复制到用户空间。">
+<meta name="keywords" content="IO">
 <meta property="og:type" content="article">
 <meta property="og:title" content="BIO、NIO、AIO">
 <meta property="og:url" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/index.html">
 <meta property="og:site_name" content="Tcytw的个人博客">
 <meta property="og:description" content="几个基本概念（针对于IO交互）： IO请求的两个阶段：  等待数据阶段：内核通过网关准备好相关的IO数据。 将数据从内核复制到用户空间。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://github.com/Tcytw/Tcytw.github.io/blob/master/2018/07/05/BIO%E3%80%81NIO%E3%80%81AIO/%E9%98%BB%E5%A1%9EIO.png">
-<meta property="og:image" content="http://yoursite.com/非阻塞IO.png">
+<meta property="og:image" content="http://yoursite.com/img/BIONIOAIO/1.png">
+<meta property="og:image" content="http://yoursite.com/img/BIONIOAIO/2.png">
 <meta property="og:image" content="http://blog.anxpp.com/usr/uploads/2016/05/549520916.png">
 <meta property="og:image" content="e:/图片/21c0d590-0547-386e-ab24-ce1cf7bf3283.png">
 <meta property="og:image" content="https://images0.cnblogs.com/blog/405877/201411/142333254136604.png">
 <meta property="og:image" content="https://images0.cnblogs.com/blog/405877/201411/142333511475767.png">
-<meta property="og:updated_time" content="2018-07-05T12:10:42.879Z">
+<meta property="og:updated_time" content="2018-07-05T13:22:48.898Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BIO、NIO、AIO">
 <meta name="twitter:description" content="几个基本概念（针对于IO交互）： IO请求的两个阶段：  等待数据阶段：内核通过网关准备好相关的IO数据。 将数据从内核复制到用户空间。">
-<meta name="twitter:image" content="https://github.com/Tcytw/Tcytw.github.io/blob/master/2018/07/05/BIO%E3%80%81NIO%E3%80%81AIO/%E9%98%BB%E5%A1%9EIO.png">
+<meta name="twitter:image" content="http://yoursite.com/img/BIONIOAIO/1.png">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -196,7 +197,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/IO/">IO</a></li></ul>
                     </div>
                 </section>
                 
@@ -275,7 +276,7 @@
   
     <div class="article-meta">
       <a href="/2018/07/05/BIO、NIO、AIO/" class="article-date">
-      <time datetime="2018-07-05T08:30:13.000Z" itemprop="datePublished">2018-07-05</time>
+      <time datetime="2018-07-05T12:34:31.000Z" itemprop="datePublished">2018-07-05</time>
 </a>
 
 
@@ -300,6 +301,10 @@
         
 
         
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IO/">IO</a></li></ul>
+    </div>
+
         <div class="clearfix"></div>
       </div>
       
@@ -307,8 +312,7 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <hr>
-<p>几个基本概念（针对于IO交互）：</p>
+        <p>几个基本概念（针对于IO交互）：</p>
 <p>IO请求的两个阶段：</p>
 <ol>
 <li>等待数据阶段：内核通过网关准备好相关的IO数据。</li>
@@ -323,8 +327,8 @@
 <p>​    阻塞IO是当线程向内核发出请求后，当资源不可用时请求一直阻塞，内核准备好数据或请求超时。</p>
 <p>​    非阻塞IO则是发出请求之后线程就去处理其他事情，隔一段时间来询问内核是否准备好数据。</p>
 <p>需要说明的是，只有同步IO中才存在阻塞的情况，异步IO中都是非阻塞的。</p>
-<p><img src="https://github.com/Tcytw/Tcytw.github.io/blob/master/2018/07/05/BIO%E3%80%81NIO%E3%80%81AIO/%E9%98%BB%E5%A1%9EIO.png" alt="picture"><center>阻塞IO</center></p>
-<p><img src="/非阻塞IO.png" alt="picture"></p>
+<p><img src="/img/BIONIOAIO/1.png" alt="picture"><center>阻塞IO</center></p>
+<p><img src="/img/BIONIOAIO/2.png" alt="picture"></p>
 <center>非阻塞IO</center>
 
 
@@ -357,8 +361,8 @@
     <div class="copyright">
         <p><span>本文标题:</span><a href="/2018/07/05/BIO、NIO、AIO/">BIO、NIO、AIO</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Tcytw</a></p>
-        <p><span>发布时间:</span>2018-07-05, 16:30:13</p>
-        <p><span>最后更新:</span>2018-07-05, 20:10:42</p>
+        <p><span>发布时间:</span>2018-07-05, 20:34:31</p>
+        <p><span>最后更新:</span>2018-07-05, 21:22:48</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/07/05/BIO、NIO、AIO/" title="BIO、NIO、AIO">http://yoursite.com/2018/07/05/BIO、NIO、AIO/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/07/05/BIO、NIO、AIO/　　作者: Tcytw" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
