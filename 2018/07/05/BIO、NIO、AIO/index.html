@@ -23,17 +23,17 @@
 <meta property="og:site_name" content="Tcytw的个人博客">
 <meta property="og:description" content="几个基本概念（针对于IO交互）： IO请求的两个阶段：  等待数据阶段：内核通过网关准备好相关的IO数据。 将数据从内核复制到用户空间。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/img/BIONIOAIO/1.png">
-<meta property="og:image" content="http://yoursite.com/img/BIONIOAIO/2.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/1.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/2.png">
 <meta property="og:image" content="http://blog.anxpp.com/usr/uploads/2016/05/549520916.png">
-<meta property="og:image" content="e:/图片/21c0d590-0547-386e-ab24-ce1cf7bf3283.png">
-<meta property="og:image" content="https://images0.cnblogs.com/blog/405877/201411/142333254136604.png">
-<meta property="og:image" content="https://images0.cnblogs.com/blog/405877/201411/142333511475767.png">
-<meta property="og:updated_time" content="2018-07-05T13:22:48.898Z">
+<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/5.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/3.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/4.png">
+<meta property="og:updated_time" content="2018-07-05T13:41:48.668Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BIO、NIO、AIO">
 <meta name="twitter:description" content="几个基本概念（针对于IO交互）： IO请求的两个阶段：  等待数据阶段：内核通过网关准备好相关的IO数据。 将数据从内核复制到用户空间。">
-<meta name="twitter:image" content="http://yoursite.com/img/BIONIOAIO/1.png">
+<meta name="twitter:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/1.png">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -327,18 +327,14 @@
 <p>​    阻塞IO是当线程向内核发出请求后，当资源不可用时请求一直阻塞，内核准备好数据或请求超时。</p>
 <p>​    非阻塞IO则是发出请求之后线程就去处理其他事情，隔一段时间来询问内核是否准备好数据。</p>
 <p>需要说明的是，只有同步IO中才存在阻塞的情况，异步IO中都是非阻塞的。</p>
-<p><img src="/img/BIONIOAIO/1.png" alt="picture"><center>阻塞IO</center></p>
-<p><img src="/img/BIONIOAIO/2.png" alt="picture"></p>
-<center>非阻塞IO</center>
-
-
-
+<p><img src="/2018/07/05/BIO、NIO、AIO/1.png" alt="picture"><center>阻塞IO</center></p>
+<p><img src="/2018/07/05/BIO、NIO、AIO/2.png" alt="picture"></p>
 <h3 id="一、同步阻塞BIO："><a href="#一、同步阻塞BIO：" class="headerlink" title="一、同步阻塞BIO："></a>一、同步阻塞BIO：</h3><h4 id="（一个连接一个线程）"><a href="#（一个连接一个线程）" class="headerlink" title="（一个连接一个线程）"></a>（一个连接一个线程）</h4><p>​    BIO是较为早期的一种服务器通信方式。原理也十分简单：只要有客户端发来IO连接请求，服务器端即创建一个线程去处理这个请求（不管内核是否准备好IO操作），直到操作完成返回输出流给客户端，在这个过程中，线程是一直阻塞的。</p>
 <p>​    BIO的缺点显而易见：当客户端发来大量并发的连接请求时，服务器性能急剧下降，甚至可能造成服务器的瘫痪。且这些连接大部分都是在“平白的”占用服务器的线程资源，因为它们可能只是在等待服务器内核准备数据。</p>
 <p>​                 <img src="http://blog.anxpp.com/usr/uploads/2016/05/549520916.png" alt="01"> </p>
 <h3 id="二、同步非阻塞NIO："><a href="#二、同步非阻塞NIO：" class="headerlink" title="二、同步非阻塞NIO："></a>二、同步非阻塞NIO：</h3><h4 id="（一个请求一个线程）"><a href="#（一个请求一个线程）" class="headerlink" title="（一个请求一个线程）"></a>（一个请求一个线程）</h4><p>​    </p>
 <p>​    NIO是基于Reactor的一种通信方式，为了解决BIO的大并发问题而提出。基本的工作模式是当有连接请求时，会将其注册到多路复用器上，当有IO请求时，才会启动线程来处理这个请求。</p>
-<p><img src="E:\图片\21c0d590-0547-386e-ab24-ce1cf7bf3283.png" alt="21c0d590-0547-386e-ab24-ce1cf7bf3283"></p>
+<p><img src="/2018/07/05/BIO、NIO、AIO/5.png" width="600"></p>
 <h6 id="（1）缓冲区Buffer"><a href="#（1）缓冲区Buffer" class="headerlink" title="（1）缓冲区Buffer"></a>（1）缓冲区Buffer</h6><p>​    buffer是一个对象，在NIO中，所有的数据都通过缓冲区来处理，包括读取和写入，都是通过缓冲区来进行的。</p>
 <h6 id="（2）通道Channel"><a href="#（2）通道Channel" class="headerlink" title="（2）通道Channel"></a>（2）通道Channel</h6><p>​    channel就是一个数据通道，我们对数据的读写都要通过它。它与流不同的地方就是是双向的，可以用于读、写和同时读写操作。</p>
 <h6 id="（3）多路复用器Selector"><a href="#（3）多路复用器Selector" class="headerlink" title="（3）多路复用器Selector"></a>（3）多路复用器Selector</h6><p>​    Selector是NIO编程的基础。</p>
@@ -346,11 +342,11 @@
 <p>​    一个Selector可以同时轮询多个Channel，用epoll()代替传统的select实现，只需要一个线程负责Selector的轮询，即可满足成千上万客户端的接入。</p>
 <p>相关过程：</p>
 <p>​    当一个线程向内核发起连接请求时，会将对应这个socket的Channel注册到多路复用器Selector上，然后服务器通过一个线程对所有的Channel不断轮询，当发现某个Channel处于就绪状态时（有读写请求），服务器就起用一个线程负责处理它的IO操作，然后返回数据给客户端线程继续执行后续事件。</p>
-<p><img src="https://images0.cnblogs.com/blog/405877/201411/142333254136604.png" alt="img"> </p>
+<p><img src="/2018/07/05/BIO、NIO、AIO/3.png" width="1200" align="center"></p>
 <p>Selector的轮询方式主要有select、poll、epoll，具体用法区别可参考</p>
 <p><a href="https://blog.csdn.net/chewbee/article/details/78108223#11%E6%B5%81%E7%9A%84%E6%A6%82%E5%BF%B5" target="_blank" rel="noopener">https://blog.csdn.net/chewbee/article/details/78108223#11%E6%B5%81%E7%9A%84%E6%A6%82%E5%BF%B5</a></p>
 <h3 id="三、异步非阻塞AIO"><a href="#三、异步非阻塞AIO" class="headerlink" title="三、异步非阻塞AIO"></a>三、异步非阻塞AIO</h3><h4 id="（一个有效请求一个线程）"><a href="#（一个有效请求一个线程）" class="headerlink" title="（一个有效请求一个线程）"></a>（一个有效请求一个线程）</h4><p>​    AIO使用的是Proactor模式，用户线程直接使用内核提供的异步IO API发起read请求，且发起后立即返回，继续执行用户线程代码。操作系统开启独立的内核线程去处理IO操作，当read请求的数据到达时，由内核负责读取socket中的数据，并写入用户指定的缓冲区中。最后内核将read的数据分发给内部Proactor，Proactor将IO完成的信息通知给用户线程（一般通过调用用户线程注册的完成事件处理函数），完成异步IO。 </p>
-<p><img src="https://images0.cnblogs.com/blog/405877/201411/142333511475767.png" alt="img"> </p>
+<p><img src="/2018/07/05/BIO、NIO、AIO/4.png" width="1200"></p>
 
       
     </div>
@@ -362,7 +358,7 @@
         <p><span>本文标题:</span><a href="/2018/07/05/BIO、NIO、AIO/">BIO、NIO、AIO</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Tcytw</a></p>
         <p><span>发布时间:</span>2018-07-05, 20:34:31</p>
-        <p><span>最后更新:</span>2018-07-05, 21:22:48</p>
+        <p><span>最后更新:</span>2018-07-05, 21:41:48</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/07/05/BIO、NIO、AIO/" title="BIO、NIO、AIO">http://yoursite.com/2018/07/05/BIO、NIO、AIO/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/07/05/BIO、NIO、AIO/　　作者: Tcytw" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
