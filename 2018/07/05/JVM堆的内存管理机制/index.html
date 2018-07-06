@@ -15,22 +15,20 @@
 
 
 
-<meta name="keywords" content="IO">
+<meta name="description" content="Java虚拟机有一套成熟的内存回收机制，被称为GC（Garbage Collection）。">
+<meta name="keywords" content="JVM,垃圾回收">
 <meta property="og:type" content="article">
-<meta property="og:title" content="BIO、NIO、AIO">
-<meta property="og:url" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/index.html">
+<meta property="og:title" content="JVM堆的内存管理机制">
+<meta property="og:url" content="http://yoursite.com/2018/07/05/JVM堆的内存管理机制/index.html">
 <meta property="og:site_name" content="Tcytw的个人博客">
+<meta property="og:description" content="Java虚拟机有一套成熟的内存回收机制，被称为GC（Garbage Collection）。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/1.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/2.png">
-<meta property="og:image" content="http://blog.anxpp.com/usr/uploads/2016/05/549520916.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/5.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/3.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/4.png">
-<meta property="og:updated_time" content="2018-07-06T03:15:44.367Z">
+<meta property="og:image" content="http://yoursite.com/2018/07/05/JVM堆的内存管理机制/1.png">
+<meta property="og:updated_time" content="2018-07-06T05:27:22.749Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="BIO、NIO、AIO">
-<meta name="twitter:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/1.png">
+<meta name="twitter:title" content="JVM堆的内存管理机制">
+<meta name="twitter:description" content="Java虚拟机有一套成熟的内存回收机制，被称为GC（Garbage Collection）。">
+<meta name="twitter:image" content="http://yoursite.com/2018/07/05/JVM堆的内存管理机制/1.png">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -62,7 +60,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>BIO、NIO、AIO | Tcytw的个人博客</title>
+<title>JVM堆的内存管理机制 | Tcytw的个人博客</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -269,10 +267,10 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"><article id="post-BIO、NIO、AIO" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-JVM堆的内存管理机制" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/07/05/BIO、NIO、AIO/" class="article-date">
+      <a href="/2018/07/05/JVM堆的内存管理机制/" class="article-date">
       <time datetime="2018-07-05T12:34:31.000Z" itemprop="datePublished">2018-07-05</time>
 </a>
 
@@ -288,7 +286,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      BIO、NIO、AIO
+      JVM堆的内存管理机制
     </h1>
   
 
@@ -299,7 +297,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IO/">IO</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JVM/">JVM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/垃圾回收/">垃圾回收</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -309,42 +307,30 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <hr>
+        <p>Java虚拟机有一套成熟的内存回收机制，被称为GC（Garbage Collection）。</p>
 <a id="more"></a>
-<p>几个基本概念（针对于IO交互）：</p>
-<p>IO请求的两个阶段：</p>
-<ol>
-<li>等待数据阶段：内核通过网关准备好相关的IO数据。</li>
-<li>将数据从内核复制到用户空间。</li>
-</ol>
-<p>同步与异步：</p>
-<p>​    同步IO：进程中的某个线程向计算机内核发出一个IO请求，然后就进入等待状态，直到IO操作完成后才醒来继续执行。</p>
-<p>​    异步IO：进程中的某个线程向计算机内核发出一个IO请求，然后立即返回，内核完成了IO操作后，向线程发送一个完成的通知，线程再去执行刚才没执行完的操作。</p>
-<p>阻塞与非阻塞：</p>
-<p>​    主要体现在IO的等待数据阶段。</p>
-<p>​    阻塞IO是当线程向内核发出请求后，当资源不可用时请求一直阻塞，内核准备好数据或请求超时。</p>
-<p>​    非阻塞IO则是发出请求之后线程就去处理其他事情，隔一段时间来询问内核是否准备好数据。</p>
-<p>需要说明的是，只有同步IO中才存在阻塞的情况，异步IO中都是非阻塞的。</p>
-<p><img src="/2018/07/05/BIO、NIO、AIO/1.png" alt="picture"><center>阻塞IO</center></p>
-<p><img src="/2018/07/05/BIO、NIO、AIO/2.png" alt="picture"></p>
-<h3 id="同步阻塞BIO："><a href="#同步阻塞BIO：" class="headerlink" title="同步阻塞BIO："></a>同步阻塞BIO：</h3><h4 id="（一个连接一个线程）"><a href="#（一个连接一个线程）" class="headerlink" title="（一个连接一个线程）"></a>（一个连接一个线程）</h4><p>​    BIO是较为早期的一种服务器通信方式。原理也十分简单：只要有客户端发来IO连接请求，服务器端即创建一个线程去处理这个请求（不管内核是否准备好IO操作），直到操作完成返回输出流给客户端，在这个过程中，线程是一直阻塞的。</p>
-<p>​    BIO的缺点显而易见：当客户端发来大量并发的连接请求时，服务器性能急剧下降，甚至可能造成服务器的瘫痪。且这些连接大部分都是在“平白的”占用服务器的线程资源，因为它们可能只是在等待服务器内核准备数据。</p>
-<p>​                 <img src="http://blog.anxpp.com/usr/uploads/2016/05/549520916.png" alt="01"> </p>
-<h3 id="同步非阻塞NIO："><a href="#同步非阻塞NIO：" class="headerlink" title="同步非阻塞NIO："></a>同步非阻塞NIO：</h3><h4 id="（一个请求一个线程）"><a href="#（一个请求一个线程）" class="headerlink" title="（一个请求一个线程）"></a>（一个请求一个线程）</h4><p>​    </p>
-<p>​    NIO是基于Reactor的一种通信方式，为了解决BIO的大并发问题而提出。基本的工作模式是当有连接请求时，会将其注册到多路复用器上，当有IO请求时，才会启动线程来处理这个请求。</p>
-<p><img src="/2018/07/05/BIO、NIO、AIO/5.png" width="600"></p>
-<h6 id="（1）缓冲区Buffer"><a href="#（1）缓冲区Buffer" class="headerlink" title="（1）缓冲区Buffer"></a>（1）缓冲区Buffer</h6><p>​    buffer是一个对象，在NIO中，所有的数据都通过缓冲区来处理，包括读取和写入，都是通过缓冲区来进行的。</p>
-<h6 id="（2）通道Channel"><a href="#（2）通道Channel" class="headerlink" title="（2）通道Channel"></a>（2）通道Channel</h6><p>​    channel就是一个数据通道，我们对数据的读写都要通过它。它与流不同的地方就是是双向的，可以用于读、写和同时读写操作。</p>
-<h6 id="（3）多路复用器Selector"><a href="#（3）多路复用器Selector" class="headerlink" title="（3）多路复用器Selector"></a>（3）多路复用器Selector</h6><p>​    Selector是NIO编程的基础。</p>
-<p>​    它的作用是不断轮询注册在其上的Channel，如果某个Channel上面客户端需要做IO操作（读写事件），Channel就处于就绪状态，会被Selector轮询出来，然后创建一个新的线程负责后续IO操作。</p>
-<p>​    一个Selector可以同时轮询多个Channel，用epoll()代替传统的select实现，只需要一个线程负责Selector的轮询，即可满足成千上万客户端的接入。</p>
-<p>相关过程：</p>
-<p>​    当一个线程向内核发起连接请求时，会将对应这个socket的Channel注册到多路复用器Selector上，然后服务器通过一个线程对所有的Channel不断轮询，当发现某个Channel处于就绪状态时（有读写请求），服务器就起用一个线程负责处理它的IO操作，然后返回数据给客户端线程继续执行后续事件。</p>
-<p><img src="/2018/07/05/BIO、NIO、AIO/3.png" width="1200" align="center"></p>
-<p>Selector的轮询方式主要有select、poll、epoll，具体用法区别可参考</p>
-<p><a href="https://blog.csdn.net/chewbee/article/details/78108223#11%E6%B5%81%E7%9A%84%E6%A6%82%E5%BF%B5" target="_blank" rel="noopener">https://blog.csdn.net/chewbee/article/details/78108223#11%E6%B5%81%E7%9A%84%E6%A6%82%E5%BF%B5</a></p>
-<h3 id="异步非阻塞AIO"><a href="#异步非阻塞AIO" class="headerlink" title="异步非阻塞AIO"></a>异步非阻塞AIO</h3><h4 id="（一个有效请求一个线程）"><a href="#（一个有效请求一个线程）" class="headerlink" title="（一个有效请求一个线程）"></a>（一个有效请求一个线程）</h4><p>​    AIO使用的是Proactor模式，用户线程直接使用内核提供的异步IO API发起read请求，且发起后立即返回，继续执行用户线程代码。操作系统开启独立的内核线程去处理IO操作，当read请求的数据到达时，由内核负责读取socket中的数据，并写入用户指定的缓冲区中。最后内核将read的数据分发给内部Proactor，Proactor将IO完成的信息通知给用户线程（一般通过调用用户线程注册的完成事件处理函数），完成异步IO。 </p>
-<p><img src="/2018/07/05/BIO、NIO、AIO/4.png" width="1200"></p>
+<p>我们知道，JVM的内存模型主要包括程序计数器、堆、方法区、虚拟机栈及本地方法栈5大块。其中程序计数器、虚拟机栈和本地方法栈是线程私有的，会随着线程的开始结束而分配内存和回收。我们重点关注的是堆和方法区的内存分配和回收，这部分的内存管理是动态的。</p>
+<p>堆（heap）被分为新生代（Young Generation）和老年代（Old Generation）。年轻代被分为三个区：1个Eden区和2个Survivor区。JVM回收内存时一般采用“分代收集算法”，基于年轻代对象存活率小的特点采用复制算法，而老年代中存活率高，使用“标记-清理”或者“标记-整理”算法。</p>
+<p><img src="/2018/07/05/JVM堆的内存管理机制/1.png"></p>
+<p><br></p>
+<h2 id="对象从出生到死亡"><a href="#对象从出生到死亡" class="headerlink" title="对象从出生到死亡"></a>对象从出生到死亡</h2><h3 id="1-对象的分配"><a href="#1-对象的分配" class="headerlink" title="1.对象的分配"></a>1.对象的分配</h3><ul>
+<li><h4 id="对象优先分配在Eden区"><a href="#对象优先分配在Eden区" class="headerlink" title="对象优先分配在Eden区"></a>对象优先分配在Eden区</h4><p> 当new一个新对象时，JVM会优先将其分配在Eden区，如果Eden区满了，则JVM会发生一次Minor GC。</p>
+<blockquote>
+<h5 id="Minor-GC"><a href="#Minor-GC" class="headerlink" title="Minor GC"></a>Minor GC</h5><blockquote>
+<p>在年轻代空间中执行内存回收叫做Minor GC。<em>当执行Minor GC时，会触发“stop the world”</em>，暂停所有应用的线程，只是对于大部分应用程序来说，时间短暂到可以忽略不计。<br>Minor GC会将Eden区还存活的对象和Survivor1区（假设Survivor1不为空，Survivor2为空）中年龄未超过阈值的对象复制到Survivor2区中，然后清空Eden和Survivor1区，始终保持有一个Survivor区为空。</p>
+</blockquote>
+</blockquote>
+</li>
+<li><h4 id="大对象直接进入老年代"><a href="#大对象直接进入老年代" class="headerlink" title="大对象直接进入老年代"></a>大对象直接进入老年代</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;这里有一个例外的情况：当JVM需要分配大量连续内存空间的对象时（最典型的就是很长的字符串或数组），会直接将它们放入放入老年代中，原因是避免在Eden区和两个Survivor区中发生大量的内存复制（年轻代采用复制算法，老年代采用标记-清除、标记-整理，处理大对象快）。<br>&nbsp;&nbsp;&nbsp;&nbsp;通过参数-XX:PretenureSizeThreshold设置大于此数值的对象直接在老年代分配。</p>
+<h3 id="2-对象的晋升"><a href="#2-对象的晋升" class="headerlink" title="2.对象的晋升"></a>2.对象的晋升</h3></li>
+<li><h4 id="晋升的阈值"><a href="#晋升的阈值" class="headerlink" title="晋升的阈值"></a>晋升的阈值</h4>&nbsp;&nbsp;&nbsp;&nbsp;在JVM中，给每个对象都定义了一个对象年龄计数器，用来记录每个对象的“年龄”：对象在Eden区出生，每经历一次Minor GC则年龄增加1。当年龄增大到一定程度时，就会晋升到老年代中。这个年龄阈值可以通过参数-XX:MaxTenuringThreshold来设置，默认为15岁。</li>
+<li><h4 id="动态对象年龄判定"><a href="#动态对象年龄判定" class="headerlink" title="动态对象年龄判定"></a>动态对象年龄判定</h4>&nbsp;&nbsp;&nbsp;&nbsp;虚拟机为了更好地判定对象进入老年代的时机，提出了一种例外情况：如果在Survivor区中所有相同年龄的对象数量总和达到了Survivor区大小的一半，则大于或等于该年龄的对象都能直接进入老年代。</li>
+</ul>
+<h3 id="3-对象的回收"><a href="#3-对象的回收" class="headerlink" title="3.对象的回收"></a>3.对象的回收</h3><ul>
+<li><h4 id="Minor-GC-1"><a href="#Minor-GC-1" class="headerlink" title="Minor GC"></a>Minor GC</h4> &nbsp;&nbsp;&nbsp;&nbsp;前面已经介绍过Minor GC，它是针对于年轻代的内存回收，当new一个新对象时Eden区无内存可分配时触发一次Minor GC。</li>
+<li><h4 id="Full-GC"><a href="#Full-GC" class="headerlink" title="Full GC"></a>Full GC</h4>&nbsp;&nbsp;&nbsp;&nbsp;当Minor GC的时候老年代的空间小于以往的平均晋升对象所需要的空间（即空间分配担保存在风险，空间分配担保可参照下文），JVM就会执行一次Full GC，收集清理包括年轻代和老年代还有永久代在内的无用对象（PS: 这里要特别说明一下，在JDK7及以前永久代即方法区，而在JDK8之后，永久代已经被移除了，取而代之的是元空间，它是存放在本地的一块内存区域，JDK8之后的Full GC应该是包括元空间在内的垃圾回收），所用的算法前文已经提到过，主要有标记-清理和标记-整理，根据具体的虚拟机的不同而不同。</li>
+<li><h4 id="空间分配担保"><a href="#空间分配担保" class="headerlink" title="空间分配担保"></a>空间分配担保</h4>&nbsp;&nbsp;&nbsp;&nbsp;如果在某次Minor GC中Survivor区的容量小于需要进行复制的对象，则会启用分配担保机制：将Eden区和Survivor区的对象都放入老年代，新对象分配进Eden区。<br>&nbsp;&nbsp;&nbsp;&nbsp;但是实际上，空间分配担保也不是每次都能成功的。在每一次Minor GC之前，虚拟机总要检查老年代中最大可连续分配的内存空间是否大于新生代总空间，如果大于，则这是一次安全的Minor GC，直接进行Minor GC。否则的话虚拟机要查看HandlePromotionFailure设置值是否允许担保失败。如果允许，则继续检查老年代的最大可用连续空间是否大于历次晋升到老年代的平均大小，如果是则进行一次有风险的Minor GC。否则如果小于或者之前的设置值不允许则改为进行一次Full GC。</li>
+</ul>
 
       
     </div>
@@ -353,13 +339,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/07/05/BIO、NIO、AIO/">BIO、NIO、AIO</a></p>
+        <p><span>本文标题:</span><a href="/2018/07/05/JVM堆的内存管理机制/">JVM堆的内存管理机制</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Tcytw</a></p>
         <p><span>发布时间:</span>2018-07-05, 20:34:31</p>
-        <p><span>最后更新:</span>2018-07-06, 11:15:44</p>
+        <p><span>最后更新:</span>2018-07-06, 13:27:22</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/07/05/BIO、NIO、AIO/" title="BIO、NIO、AIO">http://yoursite.com/2018/07/05/BIO、NIO、AIO/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/07/05/BIO、NIO、AIO/　　作者: Tcytw" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/07/05/JVM堆的内存管理机制/" title="JVM堆的内存管理机制">http://yoursite.com/2018/07/05/JVM堆的内存管理机制/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/07/05/JVM堆的内存管理机制/　　作者: Tcytw" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -372,15 +358,15 @@
     <nav id="article-nav">
         
             <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2018/07/06/线程池ThreadPoolExecutor源码分析/">
-                    线程池ThreadPoolExecutor源码分析
+                <a href="/2018/07/05/BIO、NIO、AIO/">
+                    BIO、NIO、AIO
                 </a>
             </div>
         
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2018/07/05/JVM堆的内存管理机制/">
-                    JVM堆的内存管理机制
+                <a href="/2018/07/05/Lock锁之可重入锁/">
+                    Lock锁之可重入锁
                 </a>
             </div>
         
@@ -392,7 +378,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#同步阻塞BIO："><span class="toc-number">1.</span> <span class="toc-text">同步阻塞BIO：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#（一个连接一个线程）"><span class="toc-number">1.1.</span> <span class="toc-text">（一个连接一个线程）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#同步非阻塞NIO："><span class="toc-number">2.</span> <span class="toc-text">同步非阻塞NIO：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#（一个请求一个线程）"><span class="toc-number">2.1.</span> <span class="toc-text">（一个请求一个线程）</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#（1）缓冲区Buffer"><span class="toc-number">2.1.0.1.</span> <span class="toc-text">（1）缓冲区Buffer</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#（2）通道Channel"><span class="toc-number">2.1.0.2.</span> <span class="toc-text">（2）通道Channel</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#（3）多路复用器Selector"><span class="toc-number">2.1.0.3.</span> <span class="toc-text">（3）多路复用器Selector</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#异步非阻塞AIO"><span class="toc-number">3.</span> <span class="toc-text">异步非阻塞AIO</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#（一个有效请求一个线程）"><span class="toc-number">3.1.</span> <span class="toc-text">（一个有效请求一个线程）</span></a></li></ol></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#对象从出生到死亡"><span class="toc-number">1.</span> <span class="toc-text">对象从出生到死亡</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-对象的分配"><span class="toc-number">1.1.</span> <span class="toc-text">1.对象的分配</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#对象优先分配在Eden区"><span class="toc-number">1.1.1.</span> <span class="toc-text">对象优先分配在Eden区</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Minor-GC"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">Minor GC</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#大对象直接进入老年代"><span class="toc-number">1.1.2.</span> <span class="toc-text">大对象直接进入老年代</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-对象的晋升"><span class="toc-number">1.2.</span> <span class="toc-text">2.对象的晋升</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#晋升的阈值"><span class="toc-number">1.2.1.</span> <span class="toc-text">晋升的阈值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#动态对象年龄判定"><span class="toc-number">1.2.2.</span> <span class="toc-text">动态对象年龄判定</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-对象的回收"><span class="toc-number">1.3.</span> <span class="toc-text">3.对象的回收</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Minor-GC-1"><span class="toc-number">1.3.1.</span> <span class="toc-text">Minor GC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Full-GC"><span class="toc-number">1.3.2.</span> <span class="toc-text">Full GC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#空间分配担保"><span class="toc-number">1.3.3.</span> <span class="toc-text">空间分配担保</span></a></li></ol></li></ol></li></ol>
         
     </div>
     <style>
@@ -428,7 +414,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"BIO、NIO、AIO　| Tcytw的个人博客　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"JVM堆的内存管理机制　| Tcytw的个人博客　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -448,7 +434,7 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/07/06/线程池ThreadPoolExecutor源码分析/" title="上一篇: 线程池ThreadPoolExecutor源码分析">
+            <a href="/2018/07/05/BIO、NIO、AIO/" title="上一篇: BIO、NIO、AIO">
                 <i class="fa fa-angle-left"></i>
             </a>
         
@@ -456,7 +442,7 @@
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2018/07/05/JVM堆的内存管理机制/" title="下一篇: JVM堆的内存管理机制">
+            <a href="/2018/07/05/Lock锁之可重入锁/" title="下一篇: Lock锁之可重入锁">
                 <i class="fa fa-angle-right"></i>
             </a>
         

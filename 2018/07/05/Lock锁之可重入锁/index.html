@@ -15,22 +15,15 @@
 
 
 
-<meta name="keywords" content="IO">
+<meta name="keywords" content="源码分析,lock锁">
 <meta property="og:type" content="article">
-<meta property="og:title" content="BIO、NIO、AIO">
-<meta property="og:url" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/index.html">
+<meta property="og:title" content="Lock锁之可重入锁">
+<meta property="og:url" content="http://yoursite.com/2018/07/05/Lock锁之可重入锁/index.html">
 <meta property="og:site_name" content="Tcytw的个人博客">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/1.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/2.png">
-<meta property="og:image" content="http://blog.anxpp.com/usr/uploads/2016/05/549520916.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/5.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/3.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/4.png">
-<meta property="og:updated_time" content="2018-07-06T03:15:44.367Z">
+<meta property="og:updated_time" content="2018-07-06T05:26:23.301Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="BIO、NIO、AIO">
-<meta name="twitter:image" content="http://yoursite.com/2018/07/05/BIO、NIO、AIO/1.png">
+<meta name="twitter:title" content="Lock锁之可重入锁">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -62,7 +55,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>BIO、NIO、AIO | Tcytw的个人博客</title>
+<title>Lock锁之可重入锁 | Tcytw的个人博客</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -269,10 +262,10 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"><article id="post-BIO、NIO、AIO" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Lock锁之可重入锁" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/07/05/BIO、NIO、AIO/" class="article-date">
+      <a href="/2018/07/05/Lock锁之可重入锁/" class="article-date">
       <time datetime="2018-07-05T12:34:31.000Z" itemprop="datePublished">2018-07-05</time>
 </a>
 
@@ -288,7 +281,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      BIO、NIO、AIO
+      Lock锁之可重入锁
     </h1>
   
 
@@ -299,7 +292,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IO/">IO</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lock锁/">lock锁</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/源码分析/">源码分析</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -311,41 +304,23 @@
           
         <hr>
 <a id="more"></a>
-<p>几个基本概念（针对于IO交互）：</p>
-<p>IO请求的两个阶段：</p>
-<ol>
-<li>等待数据阶段：内核通过网关准备好相关的IO数据。</li>
-<li>将数据从内核复制到用户空间。</li>
-</ol>
-<p>同步与异步：</p>
-<p>​    同步IO：进程中的某个线程向计算机内核发出一个IO请求，然后就进入等待状态，直到IO操作完成后才醒来继续执行。</p>
-<p>​    异步IO：进程中的某个线程向计算机内核发出一个IO请求，然后立即返回，内核完成了IO操作后，向线程发送一个完成的通知，线程再去执行刚才没执行完的操作。</p>
-<p>阻塞与非阻塞：</p>
-<p>​    主要体现在IO的等待数据阶段。</p>
-<p>​    阻塞IO是当线程向内核发出请求后，当资源不可用时请求一直阻塞，内核准备好数据或请求超时。</p>
-<p>​    非阻塞IO则是发出请求之后线程就去处理其他事情，隔一段时间来询问内核是否准备好数据。</p>
-<p>需要说明的是，只有同步IO中才存在阻塞的情况，异步IO中都是非阻塞的。</p>
-<p><img src="/2018/07/05/BIO、NIO、AIO/1.png" alt="picture"><center>阻塞IO</center></p>
-<p><img src="/2018/07/05/BIO、NIO、AIO/2.png" alt="picture"></p>
-<h3 id="同步阻塞BIO："><a href="#同步阻塞BIO：" class="headerlink" title="同步阻塞BIO："></a>同步阻塞BIO：</h3><h4 id="（一个连接一个线程）"><a href="#（一个连接一个线程）" class="headerlink" title="（一个连接一个线程）"></a>（一个连接一个线程）</h4><p>​    BIO是较为早期的一种服务器通信方式。原理也十分简单：只要有客户端发来IO连接请求，服务器端即创建一个线程去处理这个请求（不管内核是否准备好IO操作），直到操作完成返回输出流给客户端，在这个过程中，线程是一直阻塞的。</p>
-<p>​    BIO的缺点显而易见：当客户端发来大量并发的连接请求时，服务器性能急剧下降，甚至可能造成服务器的瘫痪。且这些连接大部分都是在“平白的”占用服务器的线程资源，因为它们可能只是在等待服务器内核准备数据。</p>
-<p>​                 <img src="http://blog.anxpp.com/usr/uploads/2016/05/549520916.png" alt="01"> </p>
-<h3 id="同步非阻塞NIO："><a href="#同步非阻塞NIO：" class="headerlink" title="同步非阻塞NIO："></a>同步非阻塞NIO：</h3><h4 id="（一个请求一个线程）"><a href="#（一个请求一个线程）" class="headerlink" title="（一个请求一个线程）"></a>（一个请求一个线程）</h4><p>​    </p>
-<p>​    NIO是基于Reactor的一种通信方式，为了解决BIO的大并发问题而提出。基本的工作模式是当有连接请求时，会将其注册到多路复用器上，当有IO请求时，才会启动线程来处理这个请求。</p>
-<p><img src="/2018/07/05/BIO、NIO、AIO/5.png" width="600"></p>
-<h6 id="（1）缓冲区Buffer"><a href="#（1）缓冲区Buffer" class="headerlink" title="（1）缓冲区Buffer"></a>（1）缓冲区Buffer</h6><p>​    buffer是一个对象，在NIO中，所有的数据都通过缓冲区来处理，包括读取和写入，都是通过缓冲区来进行的。</p>
-<h6 id="（2）通道Channel"><a href="#（2）通道Channel" class="headerlink" title="（2）通道Channel"></a>（2）通道Channel</h6><p>​    channel就是一个数据通道，我们对数据的读写都要通过它。它与流不同的地方就是是双向的，可以用于读、写和同时读写操作。</p>
-<h6 id="（3）多路复用器Selector"><a href="#（3）多路复用器Selector" class="headerlink" title="（3）多路复用器Selector"></a>（3）多路复用器Selector</h6><p>​    Selector是NIO编程的基础。</p>
-<p>​    它的作用是不断轮询注册在其上的Channel，如果某个Channel上面客户端需要做IO操作（读写事件），Channel就处于就绪状态，会被Selector轮询出来，然后创建一个新的线程负责后续IO操作。</p>
-<p>​    一个Selector可以同时轮询多个Channel，用epoll()代替传统的select实现，只需要一个线程负责Selector的轮询，即可满足成千上万客户端的接入。</p>
-<p>相关过程：</p>
-<p>​    当一个线程向内核发起连接请求时，会将对应这个socket的Channel注册到多路复用器Selector上，然后服务器通过一个线程对所有的Channel不断轮询，当发现某个Channel处于就绪状态时（有读写请求），服务器就起用一个线程负责处理它的IO操作，然后返回数据给客户端线程继续执行后续事件。</p>
-<p><img src="/2018/07/05/BIO、NIO、AIO/3.png" width="1200" align="center"></p>
-<p>Selector的轮询方式主要有select、poll、epoll，具体用法区别可参考</p>
-<p><a href="https://blog.csdn.net/chewbee/article/details/78108223#11%E6%B5%81%E7%9A%84%E6%A6%82%E5%BF%B5" target="_blank" rel="noopener">https://blog.csdn.net/chewbee/article/details/78108223#11%E6%B5%81%E7%9A%84%E6%A6%82%E5%BF%B5</a></p>
-<h3 id="异步非阻塞AIO"><a href="#异步非阻塞AIO" class="headerlink" title="异步非阻塞AIO"></a>异步非阻塞AIO</h3><h4 id="（一个有效请求一个线程）"><a href="#（一个有效请求一个线程）" class="headerlink" title="（一个有效请求一个线程）"></a>（一个有效请求一个线程）</h4><p>​    AIO使用的是Proactor模式，用户线程直接使用内核提供的异步IO API发起read请求，且发起后立即返回，继续执行用户线程代码。操作系统开启独立的内核线程去处理IO操作，当read请求的数据到达时，由内核负责读取socket中的数据，并写入用户指定的缓冲区中。最后内核将read的数据分发给内部Proactor，Proactor将IO完成的信息通知给用户线程（一般通过调用用户线程注册的完成事件处理函数），完成异步IO。 </p>
-<p><img src="/2018/07/05/BIO、NIO、AIO/4.png" width="1200"></p>
-
+<p>ReentrantLock是一种是一种显式锁（区别于Sychronized等内置锁），继承了Lock接口，它的加锁解锁方法需要显式指定。</p>
+<p>对于ReentrantLock来说，有公平锁和非公平锁两种实现方式。实现途径是通过new一个新的ReentrantLock实例的时候指定的，话不多说，直接上代码。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">//构造器1   无参数时默认使用非公平锁</span><br><span class="line">public ReentrantLock() &#123;</span><br><span class="line">    sync = new NonfairSync();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//构造器2   传入一个boolean型变量来指定锁的类型</span><br><span class="line">public ReentrantLock(boolean fair) &#123;</span><br><span class="line">    sync = fair ? new FairSync() : new NonfairSync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="lock-方法"><a href="#lock-方法" class="headerlink" title="lock()方法"></a>lock()方法</h5><p>鉴于ReentrantLock多数使用非公平锁，先来扒一扒非公平锁的调用过程。</p>
+<p>大致流程：<br>自定义类的lock() → ReentrantLock.lock() → AbstractQueuedSynchronizer.acquire() → </p>
+<p>首先看看ReentrantLock类的lock()方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void lock() &#123;</span><br><span class="line">    sync.acquire(1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里非常简单，就调用了对象sync的acquire方法。。那么sync是一个什么对象呢，看一下就知道了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">private final Sync sync;</span><br><span class="line"></span><br><span class="line">abstract static class Sync extends AbstractQueuedSynchronizer</span><br></pre></td></tr></table></figure></p>
+<p>ReentrantLock类有对sync的明确定义，是类Sync的一个引用，而Sync又是继承于AQS的一个抽象类。</p>
+<p>再对acquire方法进行跟踪<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public final void acquire(int arg) &#123;</span><br><span class="line">    if (!tryAcquire(arg) &amp;&amp;</span><br><span class="line">        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</span><br><span class="line">        selfInterrupt();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里从方法名称上大致可以看出来：<br>tryAcquire方法先试图获取锁，acquireQueued方法则是起到一个将当前线程塞入阻塞队列中的作用。</p>
+<p>于是就很清楚了：<br>如果tryAcquire()没能成功得到锁（返回false）就调用acquireQueued方法将线程加入等待队列中。随后再调用selfInterrupt()将线程挂起。</p>
+<p>一切都是我们的猜想….那具体是怎么做的呢，看看实现。。<br>跟踪tryAcquire方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">protected boolean tryAcquire(int arg) &#123;</span><br><span class="line">    throw new UnsupportedOperationException();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>纳尼？！ 直接返回了！我刚看到的时候也是一脸懵逼…  究其原因是AQS只是一个框架，具体的实现交由自定义同步器去解决。还记得我们之前提到的Sync类吗？钥匙就在这里了！<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">  /**</span><br><span class="line">   * Base of synchronization control for this lock. Subclassed</span><br><span class="line">   * into fair and nonfair versions below. Uses AQS state to</span><br><span class="line">   * represent the number of holds on the lock.</span><br><span class="line">   */</span><br><span class="line">  abstract static class Sync extends AbstractQueuedSynchronizer &#123;</span><br><span class="line">      private static final long serialVersionUID = -5179523762034025860L;</span><br><span class="line"></span><br><span class="line">      /**</span><br><span class="line">       * Performs non-fair tryLock.  tryAcquire is implemented in</span><br><span class="line">       * subclasses, but both need nonfair try for trylock method.</span><br><span class="line">       */</span><br><span class="line">      @ReservedStackAccess</span><br><span class="line">      final boolean nonfairTryAcquire(int acquires) &#123;</span><br><span class="line">          final Thread current = Thread.currentThread();</span><br><span class="line">          int c = getState();</span><br><span class="line">          if (c == 0) &#123;</span><br><span class="line">              if (compareAndSetState(0, acquires)) &#123;</span><br><span class="line">                  setExclusiveOwnerThread(current);</span><br><span class="line">                  return true;</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          else if (current == getExclusiveOwnerThread()) &#123;</span><br><span class="line">              int nextc = c + acquires;</span><br><span class="line">              if (nextc &lt; 0) // overflow</span><br><span class="line">                  throw new Error(&quot;Maximum lock count exceeded&quot;);</span><br><span class="line">              setState(nextc);</span><br><span class="line">              return true;</span><br><span class="line">          &#125;</span><br><span class="line">          return false;</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>注：上面贴的只是Sync类的部分代码。有兴趣的可以自己去读读全部的源码。</p>
+<p>这个nonfairTryAcquire()方法就是获取锁真正的实现方法了。实现锁的关键其实就在于这个state变量，无锁状态下第一个线程进来时，state的值是为0的，用CAS将state的值置为1，并将当前锁的拥有线程置为当前线程。这里要注意，state变量是一个volatile修饰的变量，因此它的值的改变对其他线程是可见的。这之后如果有其他线程进来，就直接return false了。</p>
+<p>另外，值得一提的是，else if 中显示了可重入锁为什么可重入的原因：如果进来的线程等于持有锁的线程，state+1，并返回true。<br><br><br>再来看一看acquire方法是如何实现等待队列的，为了方便查看，把上面的acquire方法再在这里贴一下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public final void acquire(int arg) &#123;</span><br><span class="line">    if (!tryAcquire(arg) &amp;&amp;</span><br><span class="line">        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</span><br><span class="line">        selfInterrupt();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">private Node addWaiter(Node mode) &#123;</span><br><span class="line">    //以指定模式new一个node，这里是独享的</span><br><span class="line">    Node node = new Node(mode);</span><br><span class="line">    </span><br><span class="line">    for (;;) &#123;</span><br><span class="line">        Node oldTail = tail;</span><br><span class="line">        //用CAS将当前node插到队列尾部</span><br><span class="line">        if (oldTail != null) &#123;</span><br><span class="line">            node.setPrevRelaxed(oldTail);</span><br><span class="line">            if (compareAndSetTail(oldTail, node)) &#123;</span><br><span class="line">                oldTail.next = node;</span><br><span class="line">                return node;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            //如果之前没有等待队列，则初始化一个等待队列</span><br><span class="line">            initializeSyncQueue();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">final boolean acquireQueued(final Node node, int arg) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        boolean interrupted = false;</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">            final Node p = node.predecessor();</span><br><span class="line">            if (p == head &amp;&amp; tryAcquire(arg)) &#123;</span><br><span class="line">                setHead(node);</span><br><span class="line">                p.next = null; // help GC</span><br><span class="line">                return interrupted;</span><br><span class="line">            &#125;</span><br><span class="line">            if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;</span><br><span class="line">                parkAndCheckInterrupt())</span><br><span class="line">                interrupted = true;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; catch (Throwable t) &#123;</span><br><span class="line">        cancelAcquire(node);</span><br><span class="line">        throw t;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -353,13 +328,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/07/05/BIO、NIO、AIO/">BIO、NIO、AIO</a></p>
+        <p><span>本文标题:</span><a href="/2018/07/05/Lock锁之可重入锁/">Lock锁之可重入锁</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Tcytw</a></p>
         <p><span>发布时间:</span>2018-07-05, 20:34:31</p>
-        <p><span>最后更新:</span>2018-07-06, 11:15:44</p>
+        <p><span>最后更新:</span>2018-07-06, 13:26:23</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/07/05/BIO、NIO、AIO/" title="BIO、NIO、AIO">http://yoursite.com/2018/07/05/BIO、NIO、AIO/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/07/05/BIO、NIO、AIO/　　作者: Tcytw" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/07/05/Lock锁之可重入锁/" title="Lock锁之可重入锁">http://yoursite.com/2018/07/05/Lock锁之可重入锁/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/07/05/Lock锁之可重入锁/　　作者: Tcytw" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -372,17 +347,11 @@
     <nav id="article-nav">
         
             <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2018/07/06/线程池ThreadPoolExecutor源码分析/">
-                    线程池ThreadPoolExecutor源码分析
-                </a>
-            </div>
-        
-        
-            <div id="article-nav-older" class="article-nav-title">
                 <a href="/2018/07/05/JVM堆的内存管理机制/">
                     JVM堆的内存管理机制
                 </a>
             </div>
+        
         
     </nav>
 
@@ -392,7 +361,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#同步阻塞BIO："><span class="toc-number">1.</span> <span class="toc-text">同步阻塞BIO：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#（一个连接一个线程）"><span class="toc-number">1.1.</span> <span class="toc-text">（一个连接一个线程）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#同步非阻塞NIO："><span class="toc-number">2.</span> <span class="toc-text">同步非阻塞NIO：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#（一个请求一个线程）"><span class="toc-number">2.1.</span> <span class="toc-text">（一个请求一个线程）</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#（1）缓冲区Buffer"><span class="toc-number">2.1.0.1.</span> <span class="toc-text">（1）缓冲区Buffer</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#（2）通道Channel"><span class="toc-number">2.1.0.2.</span> <span class="toc-text">（2）通道Channel</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#（3）多路复用器Selector"><span class="toc-number">2.1.0.3.</span> <span class="toc-text">（3）多路复用器Selector</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#异步非阻塞AIO"><span class="toc-number">3.</span> <span class="toc-text">异步非阻塞AIO</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#（一个有效请求一个线程）"><span class="toc-number">3.1.</span> <span class="toc-text">（一个有效请求一个线程）</span></a></li></ol></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#lock-方法"><span class="toc-number">1.</span> <span class="toc-text">lock()方法</span></a></li></ol>
         
     </div>
     <style>
@@ -428,7 +397,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"BIO、NIO、AIO　| Tcytw的个人博客　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"Lock锁之可重入锁　| Tcytw的个人博客　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -448,7 +417,7 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/07/06/线程池ThreadPoolExecutor源码分析/" title="上一篇: 线程池ThreadPoolExecutor源码分析">
+            <a href="/2018/07/05/JVM堆的内存管理机制/" title="上一篇: JVM堆的内存管理机制">
                 <i class="fa fa-angle-left"></i>
             </a>
         
@@ -456,9 +425,7 @@
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2018/07/05/JVM堆的内存管理机制/" title="下一篇: JVM堆的内存管理机制">
-                <i class="fa fa-angle-right"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
     </div>
 
