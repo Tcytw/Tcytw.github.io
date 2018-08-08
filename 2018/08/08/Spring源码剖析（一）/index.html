@@ -23,12 +23,12 @@
 <meta property="og:site_name" content="Tcytw的个人博客">
 <meta property="og:description" content="前言： 对于spring的源码分析对于不熟悉的人来说是一块难啃的硬骨头，希望自己能一直坚持阅读源码的好习惯~">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="c:/Users/Administrator/Desktop/spring1.jpg">
-<meta property="og:updated_time" content="2018-08-08T10:58:05.870Z">
+<meta property="og:image" content="http://yoursite.com/2018/08/08/Spring源码剖析（一）/spring1.jpg">
+<meta property="og:updated_time" content="2018-08-08T11:03:51.048Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spring源码剖析（一）">
 <meta name="twitter:description" content="前言： 对于spring的源码分析对于不熟悉的人来说是一块难啃的硬骨头，希望自己能一直坚持阅读源码的好习惯~">
-<meta name="twitter:image" content="c:/Users/Administrator/Desktop/spring1.jpg">
+<meta name="twitter:image" content="http://yoursite.com/2018/08/08/Spring源码剖析（一）/spring1.jpg">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -308,7 +308,7 @@
 <a id="more"></a>
 <p>源码环境：Spring Framework 5.0 + JDK8</p>
 <h4 id="1-xml配置文件的读取及bean加载"><a href="#1-xml配置文件的读取及bean加载" class="headerlink" title="1. xml配置文件的读取及bean加载"></a>1. xml配置文件的读取及bean加载</h4><p>上一个自己做的主要流程的图</p>
-<p><img src="C:\Users\Administrator\Desktop\spring1.jpg" alt="spring1"></p>
+<p><img src="/2018/08/08/Spring源码剖析（一）/spring1.jpg" alt="spring1"></p>
 <p>正式进入源码分析~~首先来一个测试类，这里是读取xml文件的入口：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BeanFactory bf = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">"xxx.xml"</span>);</span><br></pre></td></tr></table></figure>
 <p>PS：参考《Spring源码深度解析》，测试入口用的是 new XmlBeanFactory(new ClassPathResource(“xxx.xml”));</p>
